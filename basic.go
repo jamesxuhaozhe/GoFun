@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math"
+	"math/cmplx"
 	"runtime"
 )
 
@@ -39,4 +41,17 @@ func main() {
 	variableInitialValue()
 	variableTypeDeduction()
 	variableShorter()
+	euler()
+	triangle()
+}
+
+func triangle() {
+	a, b := 3, 4
+	var c int
+	c = int(math.Sqrt(float64(a*a + b*b)))
+	fmt.Println(c)
+}
+
+func euler() {
+	fmt.Printf("%.3f\n", cmplx.Exp(1i*math.Pi)+1)
 }
