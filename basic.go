@@ -43,6 +43,8 @@ func main() {
 	variableShorter()
 	euler()
 	triangle()
+	consts()
+	enums()
 }
 
 func triangle() {
@@ -54,4 +56,44 @@ func triangle() {
 
 func euler() {
 	fmt.Printf("%.3f\n", cmplx.Exp(1i*math.Pi)+1)
+}
+
+func consts() {
+	const filename = "abc.txt"
+	const a, b = 3, 4
+	var c int
+	c = int(math.Sqrt(a*a + b*b))
+	fmt.Println(filename, c)
+}
+
+func consts1() {
+	const (
+		filename = "abc.txt"
+		a, b     = 3, 4
+	)
+	var c int
+	c = int(math.Sqrt(a*a + b*b))
+	fmt.Println(filename, c)
+}
+
+func enums() {
+	const (
+		cpp = iota
+		_
+		python
+		golang
+		javascript
+	)
+
+	const (
+		b = 1 << (10 * iota)
+		kb
+		mb
+		gb
+		tb
+		pb
+	)
+
+	fmt.Println(cpp, javascript, python, golang)
+	fmt.Println(b, kb, mb, gb, tb, pb)
 }
