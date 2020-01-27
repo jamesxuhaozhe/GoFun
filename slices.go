@@ -41,4 +41,12 @@ func main() {
 
 	//s[i]不可以超越len（s），向后扩展不可以超越底层数组cap（s）
 
+	s3 := append(s2, 10)
+	s4 := append(s3, 11)
+	s5 := append(s4, 12)
+	fmt.Println("s3, s4, s5 =", s3, s4, s5)
+
+	// s4 and s5 no longer view arr
+	fmt.Println("arr =", arr)
+
 }
