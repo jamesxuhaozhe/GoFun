@@ -23,6 +23,13 @@ func main() {
 	}, 3, 4))
 
 	fmt.Println(sum(1, 2, 3, 4, 5))
+
+	a, b := 3, 4
+	swap(&a, &b)
+	fmt.Println(a, b)
+
+	a, b = swap2(a, b)
+	fmt.Println(a, b)
 }
 
 func eval(a, b int, op string) (int, error) {
@@ -62,4 +69,13 @@ func sum(numbers ...int) int {
 		sum += numbers[i]
 	}
 	return sum
+}
+
+func swap(a, b *int) {
+	*a, *b = *b, *a
+	//fmt.Println(a, b)
+}
+
+func swap2(a, b int) (int, int) {
+	return b, a
 }
