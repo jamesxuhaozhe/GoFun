@@ -7,44 +7,42 @@ import (
 )
 
 type myTreeNode struct {
-	node *tree.Node
+	*tree.Node //embedding
 }
 
 func (myNode *myTreeNode) postOrder() {
-	if myNode == nil || myNode.node == nil {
+	if myNode == nil || myNode.Node == nil {
 		return
 	}
 
-	left := myTreeNode{myNode.node.Left}
-	right := myTreeNode{myNode.node.Right}
+	left := myTreeNode{myNode.Left}
+	right := myTreeNode{myNode.Right}
 	left.postOrder()
 	right.postOrder()
-	myNode.node.Print()
+	myNode.Print()
+}
+
+func (myNode *myTreeNode) Traverse() {
+	fmt.Println("this method is shadowed.")
 }
 
 func main() {
-	var root tree.Node
-
-	root = tree.Node{Value: 3}
+	root := myTreeNode{&tree.Node{Value: 3}}
 	root.Left = &tree.Node{}
 	root.Right = &tree.Node{5, nil, nil}
 	root.Right.Left = new(tree.Node)
 	root.Left.Right = tree.CreateNode(2)
-
-	nodes := []tree.Node{
-		{Value: 3},
-		{},
-		{6, nil, &root},
-	}
-	fmt.Println(nodes)
-
 	root.Right.Left.SetValue(4)
-	root.Right.Left.Print()
+
+	fmt.Println("In order traversal: ")
+	fmt.Println("root.Traverse(): ")
 	root.Traverse()
-
+	fmt.Println("root.Node.Traverse(): ")
+	root.Node.Traverse()
 	fmt.Println()
 
-	myRoot := myTreeNode{&root}
-	myRoot.postOrder()
+	fmt.Println("My own post-order traversal: ")
+	root.postOrder()
 	fmt.Println()
+
 }
