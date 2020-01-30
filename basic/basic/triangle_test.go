@@ -17,3 +17,15 @@ func TestTriangle(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkTriangle(b *testing.B) {
+	aa := 30000
+	bb := 40000
+	cc := 50000
+
+	for i := 0; i < b.N; i++ {
+		if actual := calcTriangle(aa, bb); actual != cc {
+			b.Errorf("calcTriangle(%d, %d); "+"got %d; expected %d", aa, bb, actual, cc)
+		}
+	}
+}
