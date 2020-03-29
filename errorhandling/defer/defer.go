@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	"haozhexu.com/gofun/learngo/functional/fib"
 )
@@ -36,7 +38,18 @@ func writeFile(filename string) {
 	}
 }
 
+func bigSlowOperation() {
+	defer trace("bigSlowOperation")()
+	time.Sleep(10 * time.Second)
+}
+
+func trace(msg string) func() {
+	start := time.Now()
+	log.Printf("enter %s", msg)
+	return func() { log.Printf("exit %s (%s)", msg, time.Since(start)) }
+}
 func main() {
 	//tryDefer()
-	writeFile("fib.txt")
+	//writeFile("fib.txt")
+	bigSlowOperation()
 }

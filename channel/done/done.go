@@ -19,7 +19,7 @@ type worker struct {
 
 func createWorker(n int, wg *sync.WaitGroup) worker {
 	w := worker{
-		in:   make(chan int),
+		in: make(chan int),
 		done: func() {
 			wg.Done()
 		},
@@ -46,8 +46,10 @@ func chanDemo() {
 	wg.Wait()
 }
 
-
 func main() {
 	fmt.Println("Channel as first class citizen")
 	chanDemo()
+
+	defer fmt.Println("defer 1")
+	defer fmt.Println("defer 2")
 }
