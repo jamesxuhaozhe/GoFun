@@ -2,50 +2,50 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
-func doWork(id int, c chan int, done chan bool) {
-	for n := range c {
+func doWork(id int, w worker) {
+	for n := range w.in {
 		fmt.Printf("Worker %d received %c\n", id, n)
-		done <- true
+		w.done()
 	}
 }
 
 type worker struct {
 	in   chan int
-	done chan bool
+	done func()
 }
 
-func createWorker(n int) worker {
+func createWorker(n int, wg *sync.WaitGroup) worker {
 	w := worker{
 		in:   make(chan int),
-		done: make(chan bool),}
-	go doWork(n, w.in, w.done)
+		done: func() {
+			wg.Done()
+		},
+	}
+	go doWork(n, w)
 	return w
 }
 
 func chanDemo() {
+	var wg sync.WaitGroup
+	wg.Add(20)
 	var workers [10]worker
 	for i := 0; i < 10; i++ {
-		workers[i] = createWorker(i)
+		workers[i] = createWorker(i, &wg)
 	}
 
 	for i, worker := range workers {
 		worker.in <- 'a' + i
 	}
 
-	for _, worker := range workers {
-		<-worker.done
-	}
-
 	for i, worker := range workers {
 		worker.in <- 'A' + i
 	}
-
-	for _, worker := range workers {
-		<-worker.done
-	}
+	wg.Wait()
 }
+
 
 func main() {
 	fmt.Println("Channel as first class citizen")
