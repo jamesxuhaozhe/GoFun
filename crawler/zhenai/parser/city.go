@@ -6,10 +6,10 @@ import (
 	"haozhexu.com/gofun/learngo/crawler/engine"
 )
 
-const cityListRe = `<a href="(.*www\.zhenai\.com/zhenghun/[0-9a-z]+)"[^>]*>([^<]+)</a>`
+const cityRe = `<a href="(http://album.zhenai.com/u/[0-9]+)"[^>]*>([^<]+)</a>`
 
-func ParseCityList(contents []byte) engine.ParseResult {
-	re := regexp.MustCompile(cityListRe)
+func ParseCity(contents []byte) engine.ParseResult {
+	re := regexp.MustCompile(cityRe)
 	matches := re.FindAllSubmatch(contents, -1)
 
 	result := engine.ParseResult{}
@@ -17,7 +17,7 @@ func ParseCityList(contents []byte) engine.ParseResult {
 		result.Items = append(result.Items, string(m[2]))
 		result.Requests = append(result.Requests, engine.Request{
 			Url:       string(m[1]),
-			ParseFunc: ParseCity,
+			ParseFunc: engine.NilParser,
 		})
 	}
 
