@@ -29,6 +29,9 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	}
 
 	for _, r := range seeds {
+		if isDupURL(r.Url) {
+			continue
+		}
 		e.Scheduler.Submit(r)
 	}
 
@@ -39,9 +42,23 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 		}
 
 		for _, request := range result.Requests {
+			if isDupURL(request.Url) {
+				continue
+			}
 			e.Scheduler.Submit(request)
 		}
 	}
+}
+
+var visitedURLs = make(map[string]bool)
+
+func isDupURL(url string) bool {
+	if visitedURLs[url] {
+		return true
+	}
+
+	visitedURLs[url] = true
+	return false
 }
 
 func createWorker(in chan Request, out chan ParseResult, notifier ReadyNotifier) {
