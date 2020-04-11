@@ -7,6 +7,7 @@ import (
 
 	"haozhexu.com/gofun/learngo/crawler/config"
 	"haozhexu.com/gofun/learngo/crawler/engine"
+	zhenai "haozhexu.com/gofun/learngo/crawler/zhenai/parser"
 )
 
 type SerializedParser struct {
