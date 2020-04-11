@@ -1,33 +1,31 @@
-package parser
+package main
 
 import (
-	"io/ioutil"
 	"testing"
 
 	"haozhexu.com/gofun/learngo/crawler/engine"
 	"haozhexu.com/gofun/learngo/crawler/model"
+	"haozhexu.com/gofun/learngo/crawler_distributed/config"
+	"haozhexu.com/gofun/learngo/crawler_distributed/rpcsupport"
+
+	"time"
 )
 
-func TestParseProfile(t *testing.T) {
-	contents, err := ioutil.ReadFile(
-		"profile_test_data.html")
+func TestItemSaver(t *testing.T) {
+	const host = ":1234"
 
+	// start ItemSaverServer
+	go serveRpc(host, "test1")
+	time.Sleep(time.Second)
+
+	// start ItemSaverClient
+	client, err := rpcsupport.NewClient(host)
 	if err != nil {
 		panic(err)
 	}
 
-	result := parseProfile(contents,
-		"http://album.zhenai.com/u/108906739",
-		"安静的雪")
-
-	if len(result.Items) != 1 {
-		t.Errorf("Items should contain 1 "+
-			"element; but was %v", result.Items)
-	}
-
-	actual := result.Items[0]
-
-	expected := engine.Item{
+	// Call save
+	item := engine.Item{
 		Url:  "http://album.zhenai.com/u/108906739",
 		Type: "zhenai",
 		Id:   "108906739",
@@ -48,8 +46,12 @@ func TestParseProfile(t *testing.T) {
 		},
 	}
 
-	if actual != expected {
-		t.Errorf("expected %v; but was %v",
-			expected, actual)
+	result := ""
+	err = client.Call(config.ItemSaverRpc,
+		item, &result)
+
+	if err != nil || result != "ok" {
+		t.Errorf("result: %s; err: %s",
+			result, err)
 	}
 }

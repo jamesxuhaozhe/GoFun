@@ -14,9 +14,10 @@ func (s *SimpleScheduler) WorkerReady(chan engine.Request) {
 }
 
 func (s *SimpleScheduler) Run() {
-	panic("implement me")
+	s.workerChan = make(chan engine.Request)
 }
 
-func (s *SimpleScheduler) Submit(r engine.Request) {
+func (s *SimpleScheduler) Submit(
+	r engine.Request) {
 	go func() { s.workerChan <- r }()
 }

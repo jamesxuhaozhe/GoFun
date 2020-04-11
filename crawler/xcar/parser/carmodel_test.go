@@ -1,26 +1,25 @@
 package parser
 
 import (
-	"testing"
-
 	"io/ioutil"
+	"testing"
 )
 
-func TestParseCityList(t *testing.T) {
+func TestParseCarModel(t *testing.T) {
 	contents, err := ioutil.ReadFile(
-		"citylist_test_data.html")
+		"carmodel_test_data.html")
 
 	if err != nil {
 		panic(err)
 	}
 
-	result := ParseCityList(contents, "")
+	result := ParseCarModel(contents, "")
 
-	const resultSize = 470
+	const resultSize = 3
 	expectedUrls := []string{
-		"http://www.zhenai.com/zhenghun/aba",
-		"http://www.zhenai.com/zhenghun/akesu",
-		"http://www.zhenai.com/zhenghun/alashanmeng",
+		"http://newcar.xcar.com.cn/m37326/",
+		"http://newcar.xcar.com.cn/m35001/",
+		"http://newcar.xcar.com.cn/m35002/",
 	}
 
 	if len(result.Requests) != resultSize {

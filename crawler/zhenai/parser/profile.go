@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"haozhexu.com/gofun/learngo/crawler/config"
 	"haozhexu.com/gofun/learngo/crawler/engine"
 	"haozhexu.com/gofun/learngo/crawler/model"
 )
@@ -32,9 +33,13 @@ var houseRe = regexp.MustCompile(
 	`<td><span class="label">住房条件：</span><span field="">([^<]+)</span></td>`)
 var carRe = regexp.MustCompile(
 	`<td><span class="label">是否购车：</span><span field="">([^<]+)</span></td>`)
+var guessRe = regexp.MustCompile(
+	`<a class="exp-user-name"[^>]*href="(.*album\.zhenai\.com/u/[\d]+)">([^<]+)</a>`)
+var idUrlRe = regexp.MustCompile(
+	`.*album\.zhenai\.com/u/([\d]+)`)
 
-func ParseProfile(
-	contents []byte,
+func parseProfile(
+	contents []byte, url string,
 	name string) engine.ParseResult {
 	profile := model.Profile{}
 	profile.Name = name
@@ -77,7 +82,26 @@ func ParseProfile(
 		contents, xinzuoRe)
 
 	result := engine.ParseResult{
-		Items: []interface{}{profile},
+		Items: []engine.Item{
+			{
+				Url:  url,
+				Type: "zhenai",
+				Id: extractString(
+					[]byte(url), idUrlRe),
+				Payload: profile,
+			},
+		},
+	}
+
+	matches := guessRe.FindAllSubmatch(
+		contents, -1)
+	for _, m := range matches {
+		result.Requests = append(result.Requests,
+			engine.Request{
+				Url: string(m[1]),
+				Parser: NewProfileParser(
+					string(m[2])),
+			})
 	}
 
 	return result
@@ -91,5 +115,27 @@ func extractString(
 		return string(match[1])
 	} else {
 		return ""
+	}
+}
+
+type ProfileParser struct {
+	userName string
+}
+
+func (p *ProfileParser) Parse(
+	contents []byte,
+	url string) engine.ParseResult {
+	return parseProfile(contents, url, p.userName)
+}
+
+func (p *ProfileParser) Serialize() (
+	name string, args interface{}) {
+	return config.ParseProfile, p.userName
+}
+
+func NewProfileParser(
+	name string) *ProfileParser {
+	return &ProfileParser{
+		userName: name,
 	}
 }
