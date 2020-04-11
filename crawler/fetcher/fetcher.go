@@ -14,9 +14,20 @@ import (
 	"golang.org/x/text/transform"
 )
 
-var rateLimiter = time.Tick(10 * time.Millisecond)
+var (
+	rateLimiter = time.Tick(10 * time.Millisecond)
+	verboseLogging = false
+)
+
+func SetVerboseLogging()  {
+	verboseLogging = true
+}
 
 func Fetch(url string) ([]byte, error) {
+	<- rateLimiter
+	if verboseLogging {
+		log.Printf("Fetching url %s", url)
+	}
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
