@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 )
 
@@ -21,14 +22,23 @@ func main() {
 }
 
 func handleConn(conn net.Conn) {
-	buffer := make([]byte, 1024)
-	recvNum, err := conn.Read(buffer)
-	if err != nil {
-		fmt.Println(err)
+	for {
+		buffer := make([]byte, 5)
+		recvNum, err := io.ReadFull(conn, buffer)
+		if err == io.EOF {
+			// client called off
+			break
+		}
+
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		msg := string(buffer[:recvNum])
+		fmt.Println("recv from client: ", msg)
+
+		conn.Write([]byte("world"))
 	}
 
-	msg := string(buffer[:recvNum])
-	fmt.Println("recv from client: ", msg)
-
-	conn.Write([]byte("world"))
 }
